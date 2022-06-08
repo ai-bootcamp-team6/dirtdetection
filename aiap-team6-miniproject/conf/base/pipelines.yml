@@ -1,0 +1,23 @@
+data_prep:
+  raw_dirs_paths:
+    - "../aiap-team6-miniproject-data/raw/subdir1"
+  processed_data_path: "../aiap-team6-miniproject-data/processed/subdir"
+
+train:
+  setup_mlflow: false
+  mlflow_autolog: false
+  mlflow_tracking_uri: "mlflow-nginx-server-svc.polyaxon-v1.svc.local"
+  mlflow_exp_name: "aiap-team6-miniproject"
+  mlflow_artifact_location: "gs://aiap-team6-miniproject-artifacts/mlflow-tracking-server"
+  data_path: "../aiap-team6-miniproject-data/processed/subdir"
+  val_split: 0.2
+  bs: 32
+  seed: 4002
+  epochs: 3
+  optimiser: "adam"
+  metric: "accuracy"
+  pretrained_embedding: "https://tfhub.dev/google/nnlm-en-dim128-with-normalization/2"
+
+inference:
+  model_path: "./models/model-dir"
+  input_data_dir: "../aiap-team6-miniproject-data/processed/subdir"

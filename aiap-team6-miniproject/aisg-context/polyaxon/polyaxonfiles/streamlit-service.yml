@@ -1,0 +1,43 @@
+version: 1.1
+kind: component
+name: streamlit-dashboard
+description: Dashboard using Streamlit.
+tags: [streamlit, dashboard, keras]
+inputs:
+  - name: DOCKER_IMAGE
+    isOptional: true
+    type: str
+    value: asia.gcr.io/<GCP_PROJECT_ID>/streamlit:0.1.0
+  - name: SA_CRED_PATH
+    description: Path to credential file for GCP service account.
+    isOptional: true
+    type: str
+    value: /var/secret/cloud.google.com/gcp-service-account.json
+    toEnv: GOOGLE_APPLICATION_CREDENTIALS
+run:
+  kind: service
+  environment:
+    imagePullSecrets: ["gcp-imagepullsecrets"]
+  volumes:
+    - name: gcp-service-account
+      secret:
+        secretName: "gcp-sa-credentials"
+  ports:
+    - 8501
+  rewritePath: true
+  container:
+    image: "{{ DOCKER_IMAGE }}"
+    imagePullPolicy: IfNotPresent
+    command:
+      - /bin/bash
+      - ./scripts/dashboard/streamlit-entrypoint.sh
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "4"
+      limits:
+        memory: "4Gi"
+        cpu: "4"
+    volumeMounts:
+      - name: gcp-service-account
+        mountPath: /var/secret/cloud.google.com

@@ -1,0 +1,58 @@
+version: 1.1
+kind: component
+name: preprocess-data
+description: Job for preprocessing of raw data
+tags: [data_prep, processed]
+inputs:
+  - name: DOCKER_IMAGE
+    isOptional: true
+    type: str
+    value: asia.gcr.io/<GCP_PROJECT_ID>/data-prep:0.1.0
+  - name: WORKING_DIR
+    description: The working directory for the job to run in.
+    isOptional: false
+    type: str
+  - name: SA_CRED_PATH
+    description: Path to credential file for GCP service account.
+    isOptional: true
+    type: str
+    value: /var/secret/cloud.google.com/gcp-service-account.json
+    toEnv: GOOGLE_APPLICATION_CREDENTIALS
+  - name: RAW_DATA_DIRS
+    description: List of subdirectories within the raw data folder.
+    type: str
+    isOptional: false
+  - name: PROCESSED_DATA_DIR
+    description: The directory where processed data will be written to.
+    isOptional: true
+    type: str
+run:
+  kind: job
+  connections: [fstore-pvc]
+  environment:
+    imagePullSecrets: ["gcp-imagepullsecrets"]
+  volumes:
+    - name: gcp-service-account
+      secret:
+        secretName: "gcp-sa-credentials"
+  container:
+    image: "{{ DOCKER_IMAGE }}"
+    imagePullPolicy: IfNotPresent
+    workingDir: "{{ WORKING_DIR }}"
+    command: ["/bin/bash", "-c"]
+    args: [
+      "source ~/.bashrc &&
+      yq e '.data_prep.raw_dirs_paths = {{ RAW_DATA_DIRS }}' -i conf/base/pipelines.yml &&
+      python src/clean_data.py
+      data_prep.processed_data_path={{ PROCESSED_DATA_DIR }}"
+    ]
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "4"
+      limits:
+        memory: "4Gi"
+        cpu: "4"
+    volumeMounts:
+      - name: gcp-service-account
+        mountPath: /var/secret/cloud.google.com
