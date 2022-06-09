@@ -2,13 +2,16 @@ import os
 import logging
 import hydra
 import streamlit as st
-import aiap_dsp_mlops as amlo
+import requests
+import aiap_team6_miniproject as a6
 from PIL import Image
-import aiap_dsp_mlops as amlo
+import fastapi
+import urllib
+import json
 
 @st.cache(allow_output_mutation=True)
 def load_model(model_path):
-    return amlo.modeling.utils.load_model(model_path)
+    return a6.modeling.utils.load_model(model_path)
 
 @st.cache(allow_output_mutation=True)
 def load_image(image_file):
@@ -30,17 +33,17 @@ def main(args):
     logger_config_path = os.path.\
         join(hydra.utils.get_original_cwd(),
             "conf/base/logging.yml")
-    amlo.general_utils.setup_logging(logger_config_path)
+    a6.general_utils.setup_logging(logger_config_path)
 
     logger.info("Loading the model...")
     pred_model = load_model(args["inference"]["model_path"])
 
     logger.info("Loading dashboard...")
-    
+
     st.subheader("AIAP Team 6")
     image_file = st.file_uploader("Upload Images", type=["png","jpg","jpeg"])
     if image_file is not None:
-
+        
         # To See details
         file_details = {"filename":image_file.name, "filetype":image_file.type,
                             "filesize":image_file.size}
@@ -48,13 +51,15 @@ def main(args):
 
         # To View Uploaded Image
         st.image(load_image(image_file))
-
+    
         st.download_button(
-        label="Download image",
+        label="Download image", 
         data=image_file,
         file_name="imagename.png",
         mime="image/png")
-        
+        # Push image to fastapi so that you guys can do preprocessing
+        # Get preprocessed img from fastapi
+
         # To change this
         if st.button("Get sentiment"):
             logger.info("Conducting inferencing on text input...")
@@ -68,5 +73,6 @@ def main(args):
                 .format(sentiment))
         else:
             st.write("Awaiting a review...")
+
 if __name__ == "__main__":
     main()
