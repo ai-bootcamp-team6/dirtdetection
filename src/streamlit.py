@@ -4,6 +4,7 @@ import hydra
 import streamlit as st
 import aiap_dsp_mlops as amlo
 from PIL import Image
+import aiap_dsp_mlops as amlo
 
 @st.cache(allow_output_mutation=True)
 def load_model(model_path):
@@ -54,9 +55,18 @@ def main(args):
         file_name="imagename.png",
         mime="image/png")
         
-    if st.button("Processed"):
-        logger.info("Conducting inferencing on text input...")
-    else:
-        st.write("Awaiting a review...")
+        # To change this
+        if st.button("Get sentiment"):
+            logger.info("Conducting inferencing on text input...")
+            curr_pred_result = float(pred_model.predict([image_file])[0])
+            sentiment = ("positive" if curr_pred_result > 0.5
+                        else "negative")
+            logger.info(
+                "Inferencing has completed. Text input: {}. Sentiment: {}"
+                .format(image_file, sentiment))
+            st.write("The sentiment of the review is {}."
+                .format(sentiment))
+        else:
+            st.write("Awaiting a review...")
 if __name__ == "__main__":
     main()
