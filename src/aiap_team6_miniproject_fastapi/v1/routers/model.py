@@ -1,35 +1,52 @@
-import io
-
-import torch
-from PIL import Image
-from torchvision import transforms
-
+from fileinput import filename
 import os
 import logging
 import fastapi
+import uuid
+#from fastapi.responses import FileResponse
 
-#import aiap_team6_miniproject_fastapi as team6_miniproject_fapi
+# import aiap_team6_miniproject_fastapi as team6_miniproject_fapi
+# import aiap_team6_miniproject.data_prep.process_image as process_image
 from PIL import Image
 # from utils import read_imagefile
-from fastapi import UploadFile, File
-from fastapi.responses import JSONResponse, Response
-from xxlimited import Str
+from fastapi import UploadFile, File, Form
+from io import BytesIO
+import shutil
+import shutil
+import uuid
+from pathlib import Path
+from typing import List
+
+
+# logger = logging.getLogger(__name__)
+
 
 ROUTER = fastapi.APIRouter()
+# PRED_MODEL = team6_miniproject_fapi.deps.PRED_MODEL
 
-def get_segments(binary_image):
+def read_imagefile(file):
+    """Takes in jpg and png file and Read it
 
-    input_image = Image.open(io.BytesIO(binary_image)).convert("RGB")
+    Parameters
+    ----------
+
+    file: Image file with extension jpg or png
+
+    Returns
+    -------
+
+    array
+        Image array data
+    """
+    image = Image.open(BytesIO(file))
+
+    return image
     
-    # preprocessing steps
-    return input_image
-
-
 @ROUTER.post("/preprocess/image", status_code=fastapi.status.HTTP_200_OK)
-async def preprocess_api(file: bytes = File(...)): # place holder for image preprocessing 
+async def preprocess_api(file: UploadFile=File(...)): # place holder for image preprocessing 
     """Endpoint that takes in the image from user upload and preprocess it for
     training or inference.
-
+    
     Parameters
     ----------
     image : Image that user upload for training or inference.
@@ -39,63 +56,46 @@ async def preprocess_api(file: bytes = File(...)): # place holder for image prep
     str
         address of the preprocessed image
     """
+    WORK_DIR = os.getcwd()
+    # UUID to prevent file overwrite
+    # 'beautiful' path concat instead of WORK_DIR + '/' + REQUEST_ID
+    WORKSPACE = WORK_DIR
+    if not os.path.exists(WORKSPACE):
+        # recursively create workdir/unique_id
+        os.makedirs(WORKSPACE)
+    # iterate through all uploaded files
+    file.filename = f"{uuid.uuid4()}.jpg"
+    FILE_PATH = Path(file.filename)
+    WRITE_PATH = WORK_DIR / FILE_PATH
+    with open(str(WRITE_PATH) ,'wb') as myfile:
+        contents = await file.read()
+        myfile.write(contents)
+    # return local file paths
+    return {"filepath": str(WORKSPACE)+ "/" + file.filename, "source": WORK_DIR}
 
-    segmented_image = get_segments(file)
-    bytes_io = io.BytesIO()
-    segmented_image.save(bytes_io, format='PNG')
-    return Response(bytes_io.getvalue(), media_type="image/png")
-#####################################################################################
-# # logger = logging.getLogger(__name__)
-# #PRED_MODEL = team6_miniproject_fapi.deps.PRED_MODEL
-
-# def read_imagefile(file):
-#     """Takes in jpg and png file and Read it
+##########################<<<<CODE IVAN AND CHRIS HAVE DONE>>>>>################################
+# @ROUTER.post("/preprocess/image", status_code=fastapi.status.HTTP_200_OK)
+# def preprocess_api(file: UploadFile = File(...)): # place holder for image preprocessing 
+#     """Endpoint that takes in the image from user upload and preprocess it for
+#     training or inference.
 
 #     Parameters
 #     ----------
-
-#     file: Image file with extension jpg or png
+#     image : Image that user upload for training or inference.
 
 #     Returns
 #     -------
-
-#     array
-#         Image array data
+#     str
+#         address of the preprocessed image
 #     """
-#     image = Image.open(file)
+#     image = read_imagefile(file.read())
+#     image.save(uuid.uuid4().hex + r'.jpg')
+#     wk_dir = str(os.getcwd())
+#     print(wk_dir)
+#     return {"address": wk_dir}
 
-#     return image
 
-#     try:
-#         extension = file.filename.split(".")[-1] in ("jpg","jpeg","png")
-#         if not extension:
-#             return "Image must be jpg or png format."
-#         # logger.info("Uploading Image")
-#         image = read_imagefile(file.read())
-#         print("image read")
-#         # logger.info("Reading Image, starting preprocessing")
-#         # processed_image = process_image.preprocess(image) # Placeholder
-#         # logger.info("Image preprocessing completed")
-        
-#         wk_dir = str(os.getcwd())
-#         print(wk_dir)
-#         filename = file.filename
-    
-#         print(filename)
-#         image = image.save(wk_dir + filename)
-#         # Figure a way to save to polyaxon persistent data?
-#         # Saving done in the process_image.py file?
-#         # Download locally?
-#         # Create the address of the saved image
-#         saved_location = str(wk_dir + filename)
-#         print(saved_location)
-#     except Exception as error:
-#         print(error)
-#         raise fastapi.HTTPException(
-#             status_code=500, detail="Internal server error.")
-
-#     return {"address": saved_location} # placeholder for processed image address
-
+##############################<FELICIA'S CODE FOR PREDICT#######################################
 # @ROUTER.post("/infer", status_code=fastapi.status.HTTP_200_OK)
 # def predict_model(processed_file_path: str):
 #     """Endpoint that returns dirty classification of floor image.
@@ -115,6 +115,9 @@ async def preprocess_api(file: bytes = File(...)): # place holder for image prep
 #         A 500 status error is returned if the prediction steps
 #         encounters any errors.
 #     """
+#     source = ""
+#     a = Inference()
+#     a.infer(weights="YOLOMODEL/weights/full_10epoch.pt",project="YOLOMODEL/runs/detect",imgsz=[1280,900],source="YOLOMODEL/runs/detect",imgsz=[1280,900],source= source)
 
 #     try:
 #         logger.info("Generating sentiments for floor image.")
@@ -131,87 +134,18 @@ async def preprocess_api(file: bytes = File(...)): # place holder for image prep
 #         "data": {"prediction": dirt_prediction, "image_file_path": output_file_path}
 #         }
 
+############################<<<CODE FEL AND I TRIED>>>##################################
+# https://github.com/davidefiocco/streamlit-fastapi-model-serving/blob/master/fastapi/server.py
 
+# # logger = logging.getLogger(__name__)
+# #PRED_MODEL = team6_miniproject_fapi.deps.PRED_MODEL
+# def get_segments(binary_image):
 
-# # @ROUTER.get("/download/", status_code=fastapi.status.HTTP_200_OK)
-# # def download_image_api():
-# #     """
-# #     """
-# #     # need to figure out how to download processed image.
-# #     pass
+#     input_image = Image.open(io.BytesIO(binary_image)).convert("RGB")
 
+#     return input_image
 
-# # @ROUTER.delete("/delete/", status_code=fastapi.status.HTTP_200_OK)
-# # def delete_image(file):
-# #     """
-# #     """
-
-#     # Need to figure out what goes here
-
-#     return {"deleted_file": str} # place holder for deleted image file name.
-
-
-
-
-
-##############################################################################
-# Ryzal Template below
-
-# @ROUTER.post("/predict", status_code=fastapi.status.HTTP_200_OK)
-# def predict_sentiment(movie_reviews_json: team6_miniproject_fapi.schemas.MovieReviews):
-#     """Endpoint that returns sentiment classification of movie review
-#     texts.
-
-#     Parameters
-#     ----------
-#     movie_reviews_json : team6_miniproject_fapi.schemas.MovieReviews
-#         'pydantic.BaseModel' object detailing the schema of the request
-#         body
-
-#     Returns
-#     -------
-#     dict
-#         Dictionary containing the sentiments for each movie review in
-#         the body of the request.
-
-#     Raises
-#     ------
-#     fastapi.HTTPException
-#         A 500 status error is returned if the prediction steps
-#         encounters any errors.
-#     """
-#     result_dict = {"data": []}
-
-#     try:
-#         logger.info("Generating sentiments for movie reviews.")
-#         movie_reviews_dict = movie_reviews_json.dict()
-#         review_texts_array = movie_reviews_dict["reviews"]
-#         for review_val in review_texts_array:
-#             curr_pred_result = PRED_MODEL.predict([review_val["text"]])
-#             sentiment = ("positive" if curr_pred_result > 0.5
-#                         else "negative")
-#             result_dict["data"].append(
-#                 {"review_id": review_val["id"], "sentiment": sentiment})
-#             logger.info(
-#                 "Sentiment generated for Review ID: {}".
-#                 format(review_val["id"]))
-
-#     except Exception as error:
-#         print(error)
-#         raise fastapi.HTTPException(
-#             status_code=500, detail="Internal server error.")
-
-#     return result_dict
-
-
-# @ROUTER.get("/version", status_code=fastapi.status.HTTP_200_OK)
-# def get_model_version():
-#     """Get version (UUID) of predictive model used for the API.
-
-#     Returns
-#     -------
-#     dict
-#         Dictionary containing the UUID of the predictive model being
-#         served.
-#     """
-#     return {"data": {"model_uuid": team6_miniproject_fapi.config.SETTINGS.PRED_MODEL_UUID}}
+# segmented_image = get_segments(file)
+#     bytes_io = io.BytesIO()
+#     segmented_image.save(bytes_io, format='PNG')
+#     return Response(bytes_io.getvalue(), media_type="image/png")
