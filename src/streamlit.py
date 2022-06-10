@@ -1,25 +1,61 @@
 import os
 import logging
-import hydra
 import streamlit as st
 import requests
 import aiap_team6_miniproject as a6
 from PIL import Image
 import fastapi
-import urllib
+import io
 import json
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-@st.cache(allow_output_mutation=True)
-def load_model(model_path):
-    return a6.modeling.utils.load_model(model_path)
+def process(image, server_url: str):
+
+    m = MultipartEncoder(
+        fields={'file': ('filename', image, 'image/jpeg')}
+        )
+
+    r = requests.post(server_url,
+                      data=m,
+                      headers={'Content-Type': m.content_type},
+                      timeout=8000)
+
+    return r
+
+
+# interact with FastAPI endpoint
+test_url = "http://127.0.0.1:8080/api/v1/model/preprocess/image"
+predict_url = "http://127.0.0.1:8080/api/v1/model/infer"
 
 @st.cache(allow_output_mutation=True)
 def load_image(image_file):
-	img = Image.open(image_file)
-	return img
+    img = Image.open(image_file)
+    return img
 
-@hydra.main(config_path="../conf/base", config_name="pipelines.yml")
-def main(args):
+image = st.file_uploader('insert image')
+if image is not None:
+    st.image(load_image(image))
+
+if st.button('Get segmentation map'):
+
+    if image == None:
+        st.write("Insert an image!")  # handle case with no image
+    else:
+        #st.image([image], width=300)
+        segments = process(image, test_url)
+        segmented_image = Image.open(io.BytesIO(segments.content)).convert('RGB')
+        st.image([segmented_image], width=300)  # output dyptich
+
+
+
+
+@st.cache(allow_output_mutation=True)
+def load_image(image_file):
+    img = Image.open(image_file)
+    return img
+
+#@hydra.main(config_path="../conf/base", config_name="pipelines.yml")
+def main():
     """This main function does the following:
     - load logging config
     - loads trained model on cache
@@ -27,19 +63,6 @@ def main(args):
     - conducts inferencing on string
     - outputs prediction results on the dashboard
     """
-
-    logger = logging.getLogger(__name__)
-    logger.info("Setting up logging configuration.")
-    logger_config_path = os.path.\
-        join(hydra.utils.get_original_cwd(),
-            "conf/base/logging.yml")
-    a6.general_utils.setup_logging(logger_config_path)
-
-    logger.info("Loading the model...")
-    pred_model = load_model(args["inference"]["model_path"])
-
-    logger.info("Loading dashboard...")
-
     st.subheader("AIAP Team 6")
     image_file = st.file_uploader("Upload Images", type=["png","jpg","jpeg"])
     if image_file is not None:
@@ -48,31 +71,57 @@ def main(args):
         file_details = {"filename":image_file.name, "filetype":image_file.type,
                             "filesize":image_file.size}
         st.write(file_details)
-
         # To View Uploaded Image
+
         st.image(load_image(image_file))
-    
+
+        test_file = image_file.read()
+        # test_file = open(image_file)
+        test_response = requests.post(test_url, files = {"file": test_file})
+        st.write(test_response)
+
+        if test_response.ok:
+            st.write("Upload completed successfully!")
+        else:
+            st.write("Something went wrong!")
+
+        if st.button("Predictions"):
+            img_path = test_response.json()
+            results = requests.post(predict_url, files = {"file": img_path})
+            st.write(results)
+        
         st.download_button(
         label="Download image", 
         data=image_file,
         file_name="imagename.png",
         mime="image/png")
-        # Push image to fastapi so that you guys can do preprocessing
-        # Get preprocessed img from fastapi
 
-        # To change this
-        if st.button("Get sentiment"):
-            logger.info("Conducting inferencing on text input...")
-            curr_pred_result = float(pred_model.predict([image_file])[0])
-            sentiment = ("positive" if curr_pred_result > 0.5
-                        else "negative")
-            logger.info(
-                "Inferencing has completed. Text input: {}. Sentiment: {}"
-                .format(image_file, sentiment))
-            st.write("The sentiment of the review is {}."
-                .format(sentiment))
-        else:
-            st.write("Awaiting a review...")
+
+
+###############################################################################
+    # logger = logging.getLogger(__name__)
+    # logger.info("Setting up logging configuration.")
+    # logger_config_path = os.path.\
+    #     join(hydra.utils.get_original_cwd(),
+    #         "conf/base/logging.yml")
+    # a6.general_utils.setup_logging(logger_config_path)
+
+    # logger.info("Loading the model...")
+    # pred_model = load_model(args["inference"]["model_path"])
+
+    # logger.info("Loading dashboard...")
+
+        # curr_pred_result = float(pred_model.predict([image_file])[0])
+        # sentiment = ("positive" if curr_pred_result > 0.5
+        #             else "negative")
+        # logger.info(
+        #     "Inferencing has completed. Text input: {}. Sentiment: {}"
+        #     .format(image_file, sentiment))
+        # st.write("The sentiment of the review is {}."
+        #     .format(sentiment))
+    # else:
+    #     st.write("Awaiting a review...")
+
 
 if __name__ == "__main__":
     main()
