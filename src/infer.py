@@ -27,7 +27,7 @@ class Inference():
             str: directory in which the results of the inference are stored
         """
         result_dir= infer.run(weights=weights,source=source,project=project,name=name,imgsz=imgsz,conf_thres=conf_thres,max_det=max_det,device=device,line_thickness=line_thickness,hide_labels=hide_labels,hide_conf=hide_conf)
-        print(f"Result dir is {result_dir}")
+        return result_dir
 
     def get_results(self,result_dir:str)->list:
         """
@@ -38,12 +38,10 @@ class Inference():
         Returns:
             list: _description_
         """
-        detected_images = []
-        for root,dirs,files in os.walk(result_dir):
-            for file in files:
-                detected_images.append(file)
-        return detected_images
+        for path, subdirs, files in os.walk(result_dir):
+            for name in files:
+                return (os.path.join(path, name))
 
     def infer(self,weights,source,project,name="exp",imgsz=[640,640],conf_thres=0.25,max_det=1000,device="",line_thickness=3,hide_labels=False,hide_conf=False) -> str:
         result_dir = self._run(weights=weights,source=source,project=project,name=name,imgsz=imgsz,conf_thres=conf_thres,max_det=max_det,device=device,line_thickness=line_thickness,hide_labels=hide_labels,hide_conf=hide_conf)
-        print(f"Result dir is {result_dir}")
+        return result_dir

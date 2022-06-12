@@ -32,13 +32,15 @@ def main():
                             "filesize":image_file.size}
         st.write(file_details)
         # To View Uploaded Image
-        # st.image(Image.open(image_file))
+    
 
         test_file = image_file.read()
         # test_file = open(image_file)
         test_response = requests.post('http://127.0.0.1:8080/preprocess/image', files = {"file": test_file})
-        st.write(test_response)
-        # st.image(test_response)
+        saved_address = test_response.text
+        st.write("Uploaded file saved at: " + str(saved_address))
+        st.write("This is the original image")
+        st.image(Image.open(image_file))
 
         if test_response.ok:
             st.write("Upload completed successfully!")
@@ -46,8 +48,13 @@ def main():
             st.write("Something went wrong!")
 
         if st.button("Predictions"):
-            test_response = requests.post('http://127.0.0.1:8080/preprocess/image', files = {"file": test_file})
-            st.write(test_response)
+            test_response = requests.post('http://127.0.0.1:8080/predict', files = {"file": test_file})
+            st.write(test_response.json())
+            st.write("This is the returned image")
+            st.image(Image.open(test_response.json()))
+
+            # saved_address = test_response.text
+            # st.write("Uploaded file saved at: " + str(saved_address))
         
         st.download_button(
         label="Download image", 
