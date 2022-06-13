@@ -38,10 +38,12 @@ def main():
             saved_address = test_response.text
             st.write("Uploaded file saved at: " + str(saved_address))
             st.write("This is the original image")
+            st.markdown(f'<p style="color:#050505;font-size:22px;border-radius:2%;">Original image uploaded</p>', unsafe_allow_html=True)
             st.image(Image.open(image_file))
 
             if test_response.ok:
-                st.write("Upload completed successfully!")
+                st.markdown(f'<p style="color:#050505;font-size:22px;border-radius:2%;">Upload completed successfully!</p>', unsafe_allow_html=True)
+                st.markdown('#') 
             else:
                 st.write("Something went wrong!")
 
@@ -53,7 +55,7 @@ def main():
                 predict = requests.post('http://127.0.0.1:8080/predict', 
                 data = {"WRITE_PATH": test_response.json()})
                 st.write(predict.json())
-                st.write("This is the returned image")
+                st.markdown(f'<p style="color:#050505;font-size:22px;border-radius:2%;">Dirty floor or not?</p>', unsafe_allow_html=True)
                 st.image(Image.open(predict.json()))
                 an_img = predict.json()
                 # saved_address = test_response.text
@@ -74,6 +76,7 @@ def main():
     # For detection via webcam live feed
     if selected == 'Live Detection':
         if st.button('Live Detection'):
+            waiting_text = st.empty()
             waiting_text.text("Please press 'q' to exit...")
             requests.post('http://127.0.0.1:8080/live', 
             data = {"WRITE_PATH": 1})   

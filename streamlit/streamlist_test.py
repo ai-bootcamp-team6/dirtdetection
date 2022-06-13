@@ -1,4 +1,4 @@
-from fastai.vision.all import *
+
 import streamlit as st
 import matplotlib.pyplot as plt
 
