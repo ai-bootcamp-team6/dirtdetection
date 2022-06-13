@@ -1,26 +1,12 @@
-
-from email.header import Header
-from fileinput import filename
-from gzip import WRITE
 import os
 import fastapi
 import uuid
-from PIL import Image
-# from utils import read_imagefile
-from fastapi import UploadFile, Response, File, Form
-from fastapi.responses import FileResponse
-from io import BytesIO
-import shutil
-import shutil
+from fastapi import UploadFile, File, Form
 import uuid
 from pathlib import Path
-from typing import List, Optional
 from infer import Inference
 
-# logger = logging.getLogger(__name__)
 ROUTER = fastapi.APIRouter()
-# PRED_MODEL = team6_miniproject_fapi.deps.PRED_MODEL
-#################################Julia working codes########################
   
 @ROUTER.post("/preprocess/image", status_code=fastapi.status.HTTP_200_OK)
 async def preprocess_api(file: UploadFile=File(...)): # place holder for image preprocessing 
@@ -73,3 +59,23 @@ async def predict(WRITE_PATH: str = Form(...)): # place holder for image preproc
     image = a.get_results(result_dir)
     # return FileResponse(image)
     return image
+
+
+@ROUTER.post("/live", status_code=fastapi.status.HTTP_200_OK)
+async def live(WRITE_PATH: str = Form(...)): # place holder for image preprocessing 
+    """Endpoint that takes in the image from user upload and preprocess it for
+    training or inference.
+    
+    Parameters
+    ----------
+    image : Image that user upload for training or inference.
+
+    Returns
+    -------
+    str
+        address of the preprocessed image
+    """
+    result_dir = Inference()._run(weights='YOLOMODEL/full_10epoch.pt',project="YOLOMODEL/runs/detect",imgsz=[1280,900], source=0)
+    image = Inference().get_results(result_dir)
+    return image
+
