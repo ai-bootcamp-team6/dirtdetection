@@ -1,0 +1,23 @@
+{
+  "template": "https://github.com/aimakerspace/ml-project-cookiecutter-gcp",
+  "commit": "fbec6c5a2f2cdaf5c0321a60a46a7411598d0d12",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "project_name": "AIAP DSP A3 MLOps",
+      "description": "For AIAP 10's Deep Skilling Phase Assignment 3.",
+      "repo_name": "aiap-dsp-mlops",
+      "src_package_name": "aiap_dsp_mlops",
+      "src_package_name_short": "amlo",
+      "gcp_project_id": "aiap-10-ds",
+      "gcr_personal_subdir": "Yes",
+      "author_name": "felicia_wxp",
+      "open_source_license": "No license file",
+      "_copy_without_render": [
+        "aisg-context/polyaxon/polyaxonfiles"
+      ],
+      "_template": "https://github.com/aimakerspace/ml-project-cookiecutter-gcp"
+    }
+  },
+  "directory": null
+}
