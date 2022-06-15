@@ -170,4 +170,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# weights
+/src/YOLOMODEL/full_10epoch.pt
+
 ####################
