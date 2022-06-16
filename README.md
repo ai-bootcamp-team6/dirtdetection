@@ -10,7 +10,7 @@ The dataset is curated and augmented by the same team responsible for the paper.
 
 The YOLOv3 implementation is taken from ultralytics.
 
-The model is deployed to Streamlit with FastAPI.
+The model is locally deployed to Streamlit with FastAPI.
 
 ### Credits
 
@@ -33,3 +33,7 @@ https://github.com/ultralytics/yolov3
 ![](src/Images/stream_lit_upload.JPG)
 ![](src/Images/stream_lit_predict.JPG)
 ![](src/Images/stream_lit_predicted.JPG)
+
+### Live Detection
+
+The live detection feature is a simple inference call with source directed to the computer's webcam.
