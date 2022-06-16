@@ -1,3 +1,0 @@
-# Prerequisites
-
-> Coming soon...

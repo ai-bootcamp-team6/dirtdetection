@@ -1,0 +1,22 @@
+[server]
+port = 8503
+
+[browser]
+serverAddress = "localhost"
+serverPort = 8503
+
+[theme]
+# Primary accent color for interactive elements.
+primaryColor = "#f0a50e"
+
+# Background color for the main content area.
+backgroundColor = "#fcfcfc"
+
+# Background color used for the sidebar and most interactive widgets.
+secondaryBackgroundColor = "#f72a2a"
+
+# Color used for almost all text.
+textColor = "#050505"
+
+# Font family for all text in the app, except code blocks. 
+font = "sans serif"

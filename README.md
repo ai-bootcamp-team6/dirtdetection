@@ -1,70 +1,35 @@
-![AI Singapore's Kapitan MLOps EPTG (GCP) Banner](./assets/images/kapitan-mlops-eptg-gcp-banner.png)
+## Team 6: Dirt Detection Project
 
-# End-to-end Project Template (GCP)
+### Context:
 
-__Customised for `AIAP Team 6 Mini Project`__.
+We are a team of 6 apprentices coming together at the end of a bootcamp to create a AI/ML project for a model deployment presentation.
 
-__Project Description:__ For AIAP 10's mini project
+It took us 3 and a half days to complete this project. The model architecture is taken from the DirtNet paper listed below.
 
-This template that is also accompanied with an end-to-end guide was
-generated and customised using the
-following
-[`cookiecutter`](https://cookiecutter.readthedocs.io/en/stable/)
-template:
-https://github.com/aimakerspace/ml-project-cookiecutter-gcp
+The dataset is curated and augmented by the same team responsible for the paper.
 
-The contents of the guide have been customised
-according to the inputs provided upon generation of this repository
-through the usage of [`cruft`](https://cruft.github.io/cruft/),
-following instructions detailed
-[here](https://github.com/aimakerspace/ml-project-cookiecutter-gcp/blob/master/README.md)
-.
+The YOLOv3 implementation is taken from ultralytics.
 
-Inputs provided to `cookiecutter`/`cruft` for the generation of this
-template:
+The model is deployed to Streamlit with FastAPI.
 
-- __`project_name`:__ AIAP Team 6 Mini Project
-- __`description`:__ For AIAP 10's mini project
-- __`repo_name`:__ aiap-team6-miniproject
-- __`src_package_name`:__ aiap_team6_miniproject
-- __`src_package_name_short`:__ team6_miniproject
-- __`gcp_project_id`:__ aiap-10-ds
-- __`gcr_personal_subdir`:__ Yes
-- __`author_name`:__ team6_fl_msd
-- __`open_source_license`:__ No license file
+### Credits
 
-## End-to-end Guide
+Richard Bormann; Xinjie Wang; Jiawen Xu; Joel Schmidt
+for the DirtNet Paper and Model Architecture
+https://ieeexplore.ieee.org/document/9196559
 
-This repository contains a myriad of boilerplate codes and configuration
-files. On how to make use of these boilerplates, this repository
-has an end-to-end guide on that.
-The guide's contents are written in Markdown formatted files, located
-within `aisg-context/guide-site` and its subdirectories. While the
-Markdown files can be viewed directly through text editors or IDEs,
-the contents are optimised for viewing through
-[`mkdocs`](https://www.mkdocs.org) (or
-[`mkdocs-material`](https://squidfunk.github.io/mkdocs-material)
-specifically)
-.
-A demo of the site for the guide can be viewed
-[here](https://aimakerspace.github.io/ml-project-cookiecutter-gcp)
-.
+Dataset: ipa_dirt_detection
+R. Bormann, F. Weisshardt, G. Arbeiter, and J. Fischer. 
+Autonomous dirt detection for cleaning in office environments. 
+In Proceedings of the IEEE International Conference on Robotics and Automation (ICRA), 
+pages 1252–1259, 2013.
+https://owncloud.fraunhofer.de/index.php/s/AjsDYny2Xmxyl44
 
-To spin up the site on your local machine, you can create a virtual
-environment to install the dependencies first:
+Glenn Jocher - YOLOv3 Pytorch Implementation
+https://github.com/ultralytics/yolov3
 
-```bash
-$ conda create -n aisg-eptg-gcp-guide python=3.8.13
-$ conda activate aisg-eptg-gcp-guide
-$ pip install -r aisg-context/guide-site/mkdocs-requirements.txt
-```
-
-After creating the virtual environment and installing the required
-dependencies, serve it like so:
-
-```bash
-$ mkdocs serve --config-file aisg-context/guide-site/mkdocs.yml
-```
-
-The site for the guide will then be viewable on
-[`http://localhost:8000`](http://localhost:8000).
+### How the App turn out
+![](src/Images/stream_lit_main.JPG)
+![](src/Images/stream_lit_upload.JPG)
+![](src/Images/stream_lit_predict.JPG)
+![](src/Images/stream_lit_predicted.JPG)
