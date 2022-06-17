@@ -28,6 +28,10 @@ https://owncloud.fraunhofer.de/index.php/s/AjsDYny2Xmxyl44
 Glenn Jocher - YOLOv3 Pytorch Implementation
 https://github.com/ultralytics/yolov3
 
+### Architecture
+![image](https://user-images.githubusercontent.com/63988785/174216704-8d4656a8-b664-402e-924b-a2ffcda49f0a.png)
+
+
 ### Setup
 1) Download pre-trained model weights https://drive.google.com/file/d/1aJtAP0PeqlpcezkXt6FwyiFytgsH9jbe/view?usp=sharing and save file under src > YOLOMODEL
 
