@@ -30,9 +30,25 @@ https://github.com/ultralytics/yolov3
 
 ### Setup
 1) Download pre-trained model weights https://drive.google.com/file/d/1aJtAP0PeqlpcezkXt6FwyiFytgsH9jbe/view?usp=sharing and save file under src > YOLOMODEL
-2) Run:  $uvicorn main:ROUTER --host 0.0.0.0 --port 8080 to start FASTAPI
-3) Run: $streamlit run streamlit.py  --theme.backgroundColor "#f0f0f5", --theme.font "sans serif", --theme.primaryColor "#6eb52f", --theme.secondaryBackgroundColor "#e0e0ef", --theme.textColor "#262730"
 
+2) To start FASTAPI:  
+<pre>
+$uvicorn main:ROUTER --host 0.0.0.0 --port 8080
+</pre>
+
+3) To start Streamlit:
+<pre>
+$streamlit run streamlit.py
+</pre>
+
+To change streamlit theme (https://pmbaumgartner.github.io/streamlitopedia/essentials.html) (For Windows):
+<pre>
+$streamlit run streamlit.py  --theme.backgroundColor "#f0f0f5", --theme.font "sans serif", --theme.primaryColor "#6eb52f", --theme.secondaryBackgroundColor "#e0e0ef", --theme.textColor "#262730"
+</pre>
+
+For Linux/Mac OS:
+Theme can be changed via config.toml
+![image](https://user-images.githubusercontent.com/63988785/174215602-37b030ff-0746-4f69-a69d-470f69b888e3.png)
 
 ### How the App turn out
 ![](src/Images/stream_lit_main.JPG)
