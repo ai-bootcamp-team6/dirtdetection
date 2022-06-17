@@ -28,6 +28,12 @@ https://owncloud.fraunhofer.de/index.php/s/AjsDYny2Xmxyl44
 Glenn Jocher - YOLOv3 Pytorch Implementation
 https://github.com/ultralytics/yolov3
 
+### Setup
+1) Download pre-trained model weights https://drive.google.com/file/d/1aJtAP0PeqlpcezkXt6FwyiFytgsH9jbe/view?usp=sharing and save file under src > YOLOMODEL
+2) Run uvicorn main:ROUTER --host 0.0.0.0 --port 8080 to start FASTAPI
+3) Run streamlit run streamlit.py  --theme.backgroundColor "#f0f0f5", --theme.font "sans serif", --theme.primaryColor "#6eb52f", --theme.secondaryBackgroundColor "#e0e0ef", --theme.textColor "#262730"
+
+
 ### How the App turn out
 ![](src/Images/stream_lit_main.JPG)
 ![](src/Images/stream_lit_upload.JPG)
