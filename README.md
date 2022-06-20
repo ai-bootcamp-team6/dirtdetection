@@ -45,12 +45,12 @@ $uvicorn main:ROUTER --host 0.0.0.0 --port 8080
 $streamlit run streamlit.py
 </pre>
 
-To change streamlit theme (https://pmbaumgartner.github.io/streamlitopedia/essentials.html) (For Windows):
+To change streamlit theme (https://pmbaumgartner.github.io/streamlitopedia/essentials.html) :
 <pre>
 $streamlit run streamlit.py  --theme.backgroundColor "#f0f0f5", --theme.font "sans serif", --theme.primaryColor "#6eb52f", --theme.secondaryBackgroundColor "#e0e0ef", --theme.textColor "#262730"
 </pre>
 
-For Linux/Mac OS:
+Other methods to change streamlit theme:
 Theme can be changed via config.toml
 ![image](https://user-images.githubusercontent.com/63988785/174215602-37b030ff-0746-4f69-a69d-470f69b888e3.png)
 
